@@ -1,0 +1,36 @@
+{
+  "app_name": "NextJob®: Python Developer",
+  "environment": "dev",
+  "base_url_1": "https://api-dev-cached-ilaria-app.moneylib.com",
+  "base_url_2": "",
+  "base_urls": {
+    "dev": "https://api-dev-ilaria-app.moneylib.com",
+    "preprod": "https://api-preprod-cached-ilaria-app.moneylib.com",
+    "prod": "https://api-cached-ilaria-app.moneylib.com"
+  },
+  "course_key": "dev-python-full-stack-v1",
+  "colors": {
+    "light": {
+      "primary": "#7E1EFF",
+      "secondary": "#9787FF",
+      "background": "#FFFFFF",
+      "text": "#000000"
+    },
+    "dark": {
+      "primary": "#FF00FF",
+      "secondary": "#DFBFFF",
+      "background": "#121212",
+      "text": "#FFFFFF"
+    },
+    "darkDisable": "#333333",
+    "border": "#D1D1D1",
+    "hint": "#B5B5B5",
+    "red": "#FF0003",
+    "grey": "#898A8D"
+  },
+  "app_version": "1.0.0",
+  "theme_mode": "system",
+  "package_name": "com.example.cicddemo",
+  "bundle_id": "com.example.cicddemo",
+  "logo": "assets/image/applogo.webp"
+}

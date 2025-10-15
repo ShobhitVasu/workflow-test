@@ -1,0 +1,3 @@
+#include "Generated.xcconfig"
+APP_DISPLAY_NAME = NextJob®: Python Developer Dev
+BUNDLE_ID = com.example.cicddemo.dev

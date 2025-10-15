@@ -1,0 +1,36 @@
+{
+  "app_name": "NextJob®: Crypto Trader",
+  "environment": "dev",
+  "base_url_1": "https://api-app1.moneylib.com",
+  "base_url_2": "",
+  "base_urls": {
+    "dev": "https://api-dev-app1.moneylib.com",
+    "preprod": "https://api-preprod-app1.moneylib.com",
+    "prod": "https://api-app1.moneylib.com"
+  },
+  "course_key": "app1-course-key",
+  "colors": {
+    "light": {
+      "primary": "#1E90FF",
+      "secondary": "#87CEEB",
+      "background": "#FFFFFF",
+      "text": "#000000"
+    },
+    "dark": {
+      "primary": "#4169E1",
+      "secondary": "#87CEFA",
+      "background": "#121212",
+      "text": "#FFFFFF"
+    },
+    "darkDisable": "#333333",
+    "border": "#D1D1D1",
+    "hint": "#B5B5B5",
+    "red": "#FF0003",
+    "grey": "#898A8D"
+  },
+  "app_version": "1.0.0",
+  "theme_mode": "system",
+  "package_name": "com.example.app2",
+  "bundle_id": "com.example.app2",
+  "logo": "assets/image/app1logo.webp"
+}
