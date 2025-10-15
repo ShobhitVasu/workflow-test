@@ -38,6 +38,34 @@ android {
         }
     }
 
+    flavorDimensions += "env"
+    productFlavors {
+        create("dev") {
+            dimension = "env"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "Dev Flavors")
+            applicationIdSuffix = ".dev"
+        }
+        create("prepod") {
+            dimension = "env"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "Prepod Flavors")
+            applicationIdSuffix = ".preprod"
+        }
+        create("prod") {
+            dimension = "env"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "Prod Flavors")
+            applicationIdSuffix = ".prod"
+        }
+    }
+
 }
 
 flutter {
