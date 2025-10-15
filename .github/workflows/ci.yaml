@@ -15,17 +15,21 @@ jobs:
     steps:
       # Checkout the repository
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Set up Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.35.3'  # Adjust to your desired Flutter version
+          channel: 'stable'
 
       # Install dependencies
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Analyze project source
+        run: flutter analyze
 
       # Run tests
       - name: Run tests
