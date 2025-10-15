@@ -1,114 +1,43 @@
-name: Flutter CI/CD
+name: Flutter CI
 
 on:
   push:
-    branches: 
+    branches:
       - main
   pull_request:
-    branches: 
+    branches:
       - main
 
 jobs:
-  test:
-    name: Run Tests
+  build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.35.3'
-          channel: 'stable'
+          flutter-version: '3.35.3'  # Adjust to your desired Flutter version
 
+      # Install dependencies
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Analyze project source
-        run: flutter analyze
-
+      # Run tests
       - name: Run tests
         run: flutter test
 
-  build-apk:
-    name: Build APK
-    needs: test
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        app-name: [next-job.json, crypto-trader.json]  # Add your app config files here
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.35.3'
-          channel: 'stable'
-
-      - name: Install dependencies
-        run: flutter pub get
-
+      # Build APK (for Android)
       - name: Build APK
-        run: flutter build apk --release --dart-define=CONFIG_FILE=${{ matrix.app-name }}
+        run: flutter build apk --release
 
-      - name: Rename APK with config name
-        run: |
-          CONFIG_NAME=$(echo ${{ matrix.app-name }} | cut -d'.' -f1)
-          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/app-release-$CONFIG_NAME.apk
-
+      # Optionally, upload the APK artifact
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
-          name: release-apk-${{ matrix.app-name }}
-          path: build/app/outputs/flutter-apk/app-release-${{ matrix.app-name }}.apk
-
-  build-ios:
-    name: Build iOS
-    needs: test
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        app-name: [next-job.json, crypto-trader.json]  # Add your app config files here
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.35.3'
-          channel: 'stable'
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Build iOS
-        run: flutter build ios --release --no-codesign --dart-define=CONFIG_FILE=${{ matrix.app-name }}
-
-  deploy:
-    name: Deploy
-    needs: [build-apk, build-ios]
-    runs-on: ubuntu-latest
-    # Only run this job if merging to main/master branch
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Download APK artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: artifacts
-
-      # Add your deployment steps here
-      # For example, deploying to Firebase App Distribution, GitHub Releases, etc.
-      # - name: Deploy to Firebase App Distribution
-      #   uses: wzieba/Firebase-Distribution-Github-Action@v1
-      #   with:
-      #     appId: ${{ secrets.FIREBASE_APP_ID }}
-      #     token: ${{ secrets.FIREBASE_TOKEN }}
-      #     groups: testers
-      #     file: app-release.apk
+          name: flutter-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
