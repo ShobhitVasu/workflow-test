@@ -68,9 +68,13 @@ jobs:
           echo "$IOS_CERTIFICATE" | base64 --decode > certificate/dev_certificate_new_123456.p12
           echo "$IOS_PROVISIONING_PROFILE" | base64 --decode > certificate/dev_test_vasu.mobileprovision
 
+          # Debugging: Verify the decoded certificate file
+          ls -l certificate/dev_certificate_new_123456.p12
+          ls -l certificate/dev_test_vasu.mobileprovision
+
           # Create and unlock keychain for codesigning
           security create-keychain -p "" build.keychain
-          security import certificate/dev_certificate_new_123456.p12 -P "$CERT_PASSWORD" -A
+          security import certificate/dev_certificate_new_123456.p12 -P "$CERT_PASSWORD" -A -v
           security unlock-keychain -p "" build.keychain
 
           # Copy provisioning profile to the appropriate directory
