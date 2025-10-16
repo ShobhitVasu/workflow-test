@@ -59,37 +59,32 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Install CocoaPods
-        run: |
-          cd ios
-          pod install
-        if: runner.os == 'macOS'
-
       - name: Analyze code
         run: flutter analyze   
 
-      - name: Build IPA
-        run: flutter build ios --release --no-codesign --dart-define=CONFIG_FILE=${{ matrix.app-name }}
+      - name: Install CocoaPods dependencies
+        run: |
+          cd ios
+          pod install
 
-      - name: Archive iOS app
+      - name: Set up codesigning certificates
         run: |
-          cd ios
-          xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Release -archivePath $PWD/build/Runner.xcarchive clean archive
-        env:
-          CI: true
-  
-      - name: Export IPA
-        run: |
-          cd ios
-          xcodebuild -exportArchive -archivePath $PWD/build/Runner.xcarchive -exportOptionsPlist $PWD/ios/ExportOptions.plist -exportPath $PWD/build/ipa
-        env:
-          CI: true
+          echo "$IOS_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
+          echo "$IOS_PROVISIONING_PROFILE" | base64 --decode > /tmp/provisioning-profile.mobileprovision
+          security create-keychain -p "" build.keychain
+          security import /tmp/certificate.p12 -P "$CERT_PASSWORD" -A
+          security unlock-keychain -p "" build.keychain
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp /tmp/provisioning-profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/    
+
+      - name: Build IPA
+        run: flutter build ipa --release --no-codesign --dart-define=CONFIG_FILE=${{ matrix.app-name }}
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: release-ipa-${{ matrix.app-name }}
-          path: ios/build/ipa/*.ipa
+          path: build/ios/ipa/*.ipa
 
   # deploy:
   #   name: Deploy
