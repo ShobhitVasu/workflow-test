@@ -37,7 +37,6 @@ jobs:
       - name: Rename APK with config name and move to custom folder
         run: |
           CONFIG_NAME=$(echo ${{ matrix.app-name }} | cut -d'.' -f1)
-          mkdir -p flutter_apk
           mv build/app/outputs/flutter-apk/app-dev-release.apk flutter_apk/app-release-$CONFIG_NAME.apk
 
       # - name: Upload APK
