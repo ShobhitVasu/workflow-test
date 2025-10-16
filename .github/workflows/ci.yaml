@@ -65,11 +65,14 @@ jobs:
       - name: Build IPA
         run: flutter build ios --release --no-codesign --dart-define=CONFIG_FILE=${{ matrix.app-name }}
 
+      - name: List build directory
+        run: ls -R build/ios/
+
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: release-ipa-${{ matrix.app-name }}
-          path: build/ios/iphoneos/Runner.app
+          path: build/ios/iphoneos/*.ipa
 
   # deploy:
   #   name: Deploy
