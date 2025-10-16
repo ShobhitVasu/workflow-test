@@ -76,6 +76,7 @@ jobs:
           security unlock-keychain -p ${{ secrets.KEYCHAIN_PASSWORD }} build.keychain  
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+          
 
       - name: Build IPA
         run: flutter build ipa --release --dart-define=CONFIG_FILE=${{ matrix.app-name }} --export-options-plist=ios/Runner/ExportOptions.plist
