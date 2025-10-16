@@ -57,9 +57,6 @@ jobs:
           ENCRYPTED_PROVISION_PROFILE_BASE64: ${{ secrets.ENCRYPTED_PROVISION_PROFILE_BASE64 }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
           DECRYPTION_PASSWORD: ${{ secrets.DECRYPTION_PASSWORD }}       
-
-      # Step 1: Decode the certificate and provisioning profile from base64
-      - name: Decode and prepare the certificate and provisioning profile
         run: |
           # Decode the base64-encoded certificate
           echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $RUNNER_TEMP/build_certificate.p12
@@ -67,15 +64,9 @@ jobs:
           # Decode the encrypted provisioning profile from base64
           echo -n "$ENCRYPTED_PROVISION_PROFILE_BASE64" | base64 --decode -o $RUNNER_TEMP/build_pp.mobileprovision.gpg
 
-      # Step 2: Decrypt the provisioning profile using the passphrase stored in GitHub Secrets
-      - name: Decrypt the provisioning profile
-        run: |
           # Decrypt the provisioning profile using the DECRYPTION_PASSWORD secret
           echo "$DECRYPTION_PASSWORD" | gpg --batch --yes --passphrase-fd 0 --decrypt $RUNNER_TEMP/build_pp.mobileprovision.gpg > $RUNNER_TEMP/build_pp.mobileprovision
 
-      # Step 3: Set up keychain and import the certificate
-      - name: Set up keychain and import certificate
-        run: |
           # Create a temporary keychain
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
@@ -87,9 +78,6 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
 
-      # Step 4: Apply the provisioning profile
-      - name: Apply the provisioning profile
-        run: |
           # Create the necessary directory for provisioning profiles
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           
