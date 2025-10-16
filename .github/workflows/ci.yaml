@@ -43,13 +43,13 @@ jobs:
       - name: Move APK to custom folder
         run: |
           mkdir -p flutterapk
-          mv build/app/outputs/flutter-apk/app-dev-release-${{ matrix.app-name }}.apk flutterapk/
+          mv build/app/outputs/flutter-apk/app-dev-release.apk flutterapk/
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: release-apk-${{ matrix.app-name }}
-          path: flutterapk/app-dev-release-${{ matrix.app-name }}.apk
+          path: flutterapk/app-dev-release.apk
 
   # build-ios:
   #   name: Build iOS
