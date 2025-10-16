@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app-name: [next-job.json]  # Add your app config files here
+        app-name: [next-job.json]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -34,16 +34,11 @@ jobs:
       - name: Build APK
         run: flutter build apk --flavor dev --dart-define=CONFIG_FILE=${{ matrix.app-name }}
 
-      - name: List uploaded artifact files for debugging
-        run: |
-          echo "Listing uploaded artifact contents"
-          ls -R build/
-
       - name: Rename APK with config name and move to custom folder
         run: |
           CONFIG_NAME=$(echo ${{ matrix.app-name }} | cut -d'.' -f1)
           mkdir -p flutter_apk
-          mv build/app/outputs/flutter-apk/app-release.apk flutter_apk/app-release-$CONFIG_NAME.apk
+          mv build/app/outputs/flutter-apk/app-dev-release.apk flutter_apk/app-release-$CONFIG_NAME.apk
 
       # - name: Upload APK
       #   uses: actions/upload-artifact@v3
