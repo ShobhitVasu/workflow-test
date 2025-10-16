@@ -69,9 +69,13 @@ jobs:
       - name: Set up keychain and import certificates
         run: |
           security create-keychain -p ${{ secrets.KEYCHAIN_PASSWORD }} build.keychain
-          security import "${{ secrets.P12_CERTIFICATE_PATH }}" -k ~/Library/Keychains/build.keychain -P ${{ secrets.P12_CERTIFICATE_PASSWORD }} -T /usr/bin/codesign
-          security import "${{ secrets.PROVISIONING_PROFILE_PATH }}" -k ~/Library/Keychains/build.keychain
+          security import "${{ secrets.P12_CERTIFICATE_PATH }}" -k build.keychain -P ${{ secrets.P12_CERTIFICATE_PASSWORD }} -T /usr/bin/codesign
+          security import "${{ secrets.PROVISIONING_PROFILE_PATH }}" -k build.keychain
+          security list-keychains -s build.keychain
+          security default-keychain -s build.keychain
           security unlock-keychain -p ${{ secrets.KEYCHAIN_PASSWORD }} build.keychain  
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
 
       - name: Build IPA
         run: flutter build ipa --release --dart-define=CONFIG_FILE=${{ matrix.app-name }} --export-options-plist=ios/Runner/ExportOptions.plist
@@ -81,12 +85,6 @@ jobs:
         with:
           name: release-ipa-${{ matrix.app-name }}
           path: build/ios/ipa/*.ipa
-
-      - name: Clean up keychain and provisioning profile
-        if: ${{ always() }}
-        run: |
-          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
-          rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision    
 
   # deploy:
   #   name: Deploy
