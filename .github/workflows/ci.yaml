@@ -99,11 +99,6 @@ jobs:
       - name: Analyze code
         run: flutter analyze
 
-      # - name: Install CocoaPods
-      #   run: |
-      #     cd ios
-      #     pod install --repo-update
-
       - name: Build IPA
         run: flutter build ipa --release --dart-define=CONFIG_FILE=${{ matrix.app-name }} --export-options-plist=ios/Runner/ExportOptions.plist
 
