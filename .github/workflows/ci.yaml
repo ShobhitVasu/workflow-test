@@ -67,18 +67,25 @@ jobs:
           cd ios
           pod install
 
-      - name: Set up codesigning certificates
-        run: |
-          echo "$IOS_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
-          echo "$IOS_PROVISIONING_PROFILE" | base64 --decode > /tmp/provisioning-profile.mobileprovision
-          security create-keychain -p "" build.keychain
-          security import /tmp/certificate.p12 -P "$CERT_PASSWORD" -A
-          security unlock-keychain -p "" build.keychain
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp /tmp/provisioning-profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/    
+      # - name: Set up codesigning certificates
+      #   run: |
+      #     echo "$IOS_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
+      #     echo "$IOS_PROVISIONING_PROFILE" | base64 --decode > /tmp/provisioning-profile.mobileprovision
+      #     security create-keychain -p "" build.keychain
+      #     security import /tmp/certificate.p12 -P "$CERT_PASSWORD" -A
+      #     security unlock-keychain -p "" build.keychain
+      #     mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+      #     cp /tmp/provisioning-profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/    
 
       - name: Build IPA
         run: flutter build ipa --release --no-codesign --dart-define=CONFIG_FILE=${{ matrix.app-name }}
+
+      - name: Manually sign the built IPA (optional)
+        run: |
+          cd ios
+          xcodebuild -exportArchive -archivePath build/ios/archive/Runner.xcarchive \
+                     -exportOptionsPlist ios/ExportOptions.plist \
+                     -exportPath build/ios/ipa
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
