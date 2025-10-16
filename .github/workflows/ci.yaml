@@ -59,33 +59,36 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Analyze code
-        run: flutter analyze
+      - run: pod repo update
+        working-directory: ios   
 
       - name: Build iOS app (Release)
         run: flutter build ios --release --no-codesign
 
-      # Step 5: Set up keychain for provisioning profile and certificates
-      - name: Set up keychain and import certificates
-        run: |
-          security create-keychain -p ${{ secrets.KEYCHAIN_PASSWORD }} build.keychain
-          security list-keychains -s ~/Library/Keychains/build.keychain
-          security unlock-keychain -p ${{ secrets.KEYCHAIN_PASSWORD }} build.keychain 
-          echo "${{ secrets.P12_CERTIFICATE_CONTENT }}" | base64 --decode > certificate.p12 
-          security import "certificate.p12" -k ~/Library/Keychains/build.keychain -P ${{ secrets.P12_CERTIFICATE_PASSWORD }} -T /usr/bin/codesign
-          echo "${{ secrets.PROVISIONING_PROFILE_CONTENT }}" | base64 --decode > provisioning_profile.mobileprovision
-          security import provisioning_profile.mobileprovision -k ~/Library/Keychains/build.keychain
-          security find-identity -v -p codesigning ~/Library/Keychains/build.keychain
+      - run: mkdir Payload
+        working-directory: build/ios/iphoneos
 
+      - run: mv Runner.app/ Payload
+        working-directory: build/ios/iphoneos  
 
-      - name: Build IPA
-        run: flutter build ipa --release --dart-define=CONFIG_FILE=${{ matrix.app-name }} --export-options-plist=ios/Runner/ExportOptions.plist
+      - name: Zip output
+        run: zip -qq -r -9 FlutterIpaExport.ipa Payload
+        working-directory: build/ios/iphoneos
 
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: release-ipa-${{ matrix.app-name }}
-          path: build/ios/ipa/*.ipa
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/ios/iphoneos/FlutterIpaExport.ipa
+          tag: v1.0
+          overwrite: true
+          body: "This is first release"
+
+      # - name: Upload IPA
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: release-ipa-${{ matrix.app-name }}
+      #     path: build/ios/ipa/*.ipa
 
   # deploy:
   #   name: Deploy
