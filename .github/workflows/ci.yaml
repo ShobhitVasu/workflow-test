@@ -62,20 +62,23 @@ jobs:
       - name: Analyze code
         run: flutter analyze   
 
-      # - name: Install CocoaPods dependencies
-      #   run: |
-      #     cd ios
-      #     pod install
+      - name: Set up codesigning certificates
+        run: |
+          # Decode and store the certificate and provisioning profile
+          echo "$IOS_CERTIFICATE" | base64 --decode > certificate/dev_certificate_new_123456.p12
+          echo "$IOS_PROVISIONING_PROFILE" | base64 --decode > certificate/dev_test_vasu.mobileprovision
 
-      # - name: Set up codesigning certificates
-      #   run: |
-      #     echo "$IOS_CERTIFICATE" | base64 --decode > /tmp/certificate.p12
-      #     echo "$IOS_PROVISIONING_PROFILE" | base64 --decode > /tmp/provisioning-profile.mobileprovision
-      #     security create-keychain -p "" build.keychain
-      #     security import /tmp/certificate.p12 -P "$CERT_PASSWORD" -A
-      #     security unlock-keychain -p "" build.keychain
-      #     mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-      #     cp /tmp/provisioning-profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/    
+          # Create and unlock keychain for codesigning
+          security create-keychain -p "" build.keychain
+          security import certificate/dev_certificate_new_123456.p12 -P "$CERT_PASSWORD" -A
+          security unlock-keychain -p "" build.keychain
+
+          # Copy provisioning profile to the appropriate directory
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp certificate/dev_test_vasu.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+
+          # Debugging step: Check if provisioning profile is copied
+          ls ~/Library/MobileDevice/Provisioning\ Profiles/  
 
       - name: Build IPA
         run: flutter build ipa --release --dart-define=CONFIG_FILE=${{ matrix.app-name }}
