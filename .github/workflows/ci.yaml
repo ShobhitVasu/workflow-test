@@ -99,34 +99,34 @@ jobs:
       - name: Analyze code
         run: flutter analyze
 
-      - name: Build iOS app
-        run: flutter build ios --release --no-codesign
-
-      - name: Export IPA
+      - name: Install CocoaPods
         run: |
           cd ios
-          xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Release -archivePath build/Runner.xcarchive archive
-          xcodebuild -exportArchive -archivePath build/Runner.xcarchive -exportPath build/Runner.ipa -exportOptionsPlist ExportOptions.plist
-          
-      - name: Upload IPA to GitHub Release
-        uses: ncipollo/release-action@v1
+          pod install --repo-update
+
+      - name: Build archive
+        run: |
+          xcodebuild -scheme "I am Groot" \
+          -archivePath $RUNNER_TEMP/iamgroot.xcarchive \
+          -sdk iphoneos \
+          -configuration Debug \
+          -destination generic/platform=iOS \
+          clean archive     
+
+      - name: Build IPA
+        run: flutter build ipa --release --dart-define=CONFIG_FILE=${{ matrix.app-name }} --export-options-plist=ios/Runner/ExportOptions.plist
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
         with:
-          files: ios/build/Runner.ipa
+          name: release-ipa-${{ matrix.app-name }}
+          path: build/ios/ipa/*.ipa
 
-      # - name: Build IPA
-      #   run: flutter build ipa --release --dart-define=CONFIG_FILE=${{ matrix.app-name }} --export-options-plist=ios/Runner/ExportOptions.plist
-
-      # - name: Upload IPA
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: release-ipa-${{ matrix.app-name }}
-      #     path: build/ios/ipa/*.ipa
-
-      # - name: Clean up keychain and provisioning profile
-      #   if: ${{ always() }}
-      #   run: |
-      #     security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
-      #     rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision    
+      - name: Clean up keychain and provisioning profile
+        if: ${{ always() }}
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+          rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision    
 
   # deploy:
   #   name: Deploy
