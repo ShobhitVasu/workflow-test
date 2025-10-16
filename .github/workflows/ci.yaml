@@ -59,17 +59,37 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install
+        if: runner.os == 'macOS'
+
       - name: Analyze code
         run: flutter analyze   
 
       - name: Build IPA
-        run: flutter build ipa --release --no-codesign --dart-define=CONFIG_FILE=${{ matrix.app-name }}
+        run: flutter build ios --release --no-codesign --dart-define=CONFIG_FILE=${{ matrix.app-name }}
+
+      - name: Archive iOS app
+        run: |
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace -scheme Runner -configuration Release -archivePath $PWD/build/Runner.xcarchive clean archive
+        env:
+          CI: true
+  
+      - name: Export IPA
+        run: |
+          cd ios
+          xcodebuild -exportArchive -archivePath $PWD/build/Runner.xcarchive -exportOptionsPlist $PWD/ios/ExportOptions.plist -exportPath $PWD/build/ipa
+        env:
+          CI: true
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: release-ipa-${{ matrix.app-name }}
-          path: build/ios/ipa/*.ipa
+          path: ios/build/ipa/*.ipa
 
   # deploy:
   #   name: Deploy
