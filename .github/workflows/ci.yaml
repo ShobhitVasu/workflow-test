@@ -64,7 +64,7 @@ jobs:
           
           CERTIFICATE_PATH="/Volumes/Extra/testcertificate/dev_certificate_new_123456.p12"
           PP_PATH="/Volumes/Extra/testcertificate/dev_test_vasu.mobileprovision"
-          KEYCHAIN_PATH=/Users/ios/Library/Keychains/login.keychain-db
+          KEYCHAIN_PATH="/Users/ios/Library/Keychains/BC0C8F52-96A8-50E8-A5F0-62CB1A5FCC99.keychain-db"
 
           # import certificate and provisioning profile from secrets
           # echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
