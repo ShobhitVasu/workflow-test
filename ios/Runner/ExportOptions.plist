@@ -16,5 +16,10 @@
     <string>A2J2UWG88M</string>
     <key>thinning</key>
     <string>&lt;none&gt;</string>
+    <key>provisioningProfiles</key>
+    <dict>
+      <key>com.pgac0cdz2yd.pwxpecxgoapp</key>
+      <string>dev_plantprofile</string>
+    </dict>
 </dict>
 </plist>
