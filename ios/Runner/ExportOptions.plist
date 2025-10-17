@@ -2,25 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>compileBitcode</key>
-    <true/>
-    <key>destination</key>
-    <string>export</string>
-    <key>method</key>
-    <string>enterprise</string>
-    <key>signingStyle</key>
-    <string>manual</string>
-    <key>stripSwiftSymbols</key>
-    <true/>
-    <key>teamID</key>
-    <string>A2J2UWG88M</string>
-    <key>thinning</key>
-    <string>&lt;none&gt;</string>
-    <key>provisioningProfiles</key>
-    <dict>
-      <key>com.pgac0cdz2yd.pwxpecxgoapp</key>
-      <string>dev_plantprofile</string>
-      <string>dis_plantprofile</string>
-    </dict>
+	<key>destination</key>
+	<string>export</string>
+	<key>method</key>
+	<string>debugging</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.pgac0cdz2yd.pwxpecxgoapp</key>
+		<string>dev_plantprofile</string>
+	</dict>
+	<key>signingCertificate</key>
+	<string>5752A50A394D3C95D29A6A00E38670C952180DEC</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>stripSwiftSymbols</key>
+	<true/>
+	<key>teamID</key>
+	<string>A2J2UWG88M</string>
+	<key>thinning</key>
+	<string>&lt;none&gt;</string>
 </dict>
 </plist>
