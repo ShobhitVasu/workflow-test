@@ -102,7 +102,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd ios
-          pod install  
+          pod install
 
       - name: Build IPA
         run: flutter build ipa --release --dart-define=CONFIG_FILE=${{ matrix.app-name }} --export-options-plist=ios/Runner/ExportOptions.plist
